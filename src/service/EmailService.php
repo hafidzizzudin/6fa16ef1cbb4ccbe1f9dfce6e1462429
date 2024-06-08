@@ -2,8 +2,9 @@
 
 namespace Src\Service;
 
-use Src\Entity\SendEmailRequest;
-use Src\Module\EmailSender;
+use Exception;
+use Src\Entity\Email;
+use Src\Module\EmailSender\EmailSender;
 use Src\Repository\Email\EmailRepository;
 
 class EmailService
@@ -14,12 +15,17 @@ class EmailService
     ) {
     }
 
-    public function sendEmail(SendEmailRequest $req): void
+    public function sendEmail(Email $req): void
     {
-        // send email async
-        $this->emailSender->send($req);
-
         // save email in repository
-        $this->emailRepository->save($req);
+        $id = $this->emailRepository->save($req);
+
+        if (!$id) {
+            throw new Exception("Failed to insert email");
+        }
+
+        // send email async
+        $req->setID($id);
+        $this->emailSender->send($req);
     }
 }

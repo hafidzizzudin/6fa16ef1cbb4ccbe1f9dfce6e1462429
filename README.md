@@ -2,8 +2,9 @@
 This service main functionality is to send email asynchronously using worker. The detail information about this service is listed below:
 - Language: `PHP`
 - Dependency Management: `composer`
-- Database: `MySQL`
+- Database: `PostgreSQL`
 - Protocol: `HTTP`
+- Queue: `Redis`
 
 ### Database migration
 #### Run Manual

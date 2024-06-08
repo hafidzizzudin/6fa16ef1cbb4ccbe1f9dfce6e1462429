@@ -2,9 +2,10 @@
 
 namespace Src\Repository\Email;
 
-use Src\Entity\SendEmailRequest;
+use Src\Entity\Email;
 
 interface EmailRepository
 {
-    public function save(SendEmailRequest $req);
+    public function save(Email $req): int;
+    public function updateResult(Email $req);
 }
