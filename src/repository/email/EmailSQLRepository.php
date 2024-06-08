@@ -5,7 +5,7 @@ namespace Src\Repository\Email;
 use PDO;
 use Src\Entity\SendEmailRequest;
 
-class EmailMysqlRepository implements EmailRepository
+class EmailSQLRepository implements EmailRepository
 {
     public function __construct(private PDO $db)
     {

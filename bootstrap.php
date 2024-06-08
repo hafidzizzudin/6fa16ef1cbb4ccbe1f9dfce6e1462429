@@ -3,7 +3,7 @@ require 'vendor/autoload.php';
 
 use Dotenv\Dotenv;
 use Src\Entity\SendEmailRequest;
-use Src\Repository\Email\EmailMysqlRepository;
+use Src\Repository\Email\EmailSQLRepository;
 use Src\Service\EmailService;
 use Src\System\DatabaseConnector;
 
@@ -15,7 +15,7 @@ $dotenv->load();
 $dbConnection = (new DatabaseConnector())->getDbConnection();
 
 // init repository
-$emailRepository = new EmailMysqlRepository($dbConnection);
+$emailRepository = new EmailSQLRepository($dbConnection);
 
 // init service
 $emailService = new EmailService($emailRepository);

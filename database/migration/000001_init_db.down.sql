@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS `email`;
+DROP TABLE IF EXISTS email;

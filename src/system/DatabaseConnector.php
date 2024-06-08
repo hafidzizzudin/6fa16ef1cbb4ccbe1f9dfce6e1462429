@@ -18,12 +18,12 @@ class DatabaseConnector
 
         try {
             $this->dbConnection = new PDO(
-                "mysql:host=$host;port=$port;charset=utf8mb4;dbname=$db",
+                "pgsql:host=$host;port=$port;dbname=$db",
                 $user,
                 $pass
             );
         } catch (\PDOException $e) {
-            exit($e->getMessage());
+            exit('error connect db: ' . $e->getMessage());
         }
     }
 
