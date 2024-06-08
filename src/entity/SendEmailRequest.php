@@ -9,6 +9,7 @@ class SendEmailRequest
         private bool $isHtml,
         private string $emailTo,
         private string $body,
+        private string $subject = 'Send Email'
     ) {
     }
 
@@ -32,6 +33,11 @@ class SendEmailRequest
         return $this->emailTo;
     }
 
+    public function getSubject(): string
+    {
+        return $this->subject;
+    }
+
     public function toArray(): array
     {
         return [
@@ -39,6 +45,7 @@ class SendEmailRequest
             'is_html' => (int)$this->isHtml,
             'email_to' => $this->emailTo,
             'body' => $this->body,
+            'subject' => $this->subject,
         ];
     }
 }

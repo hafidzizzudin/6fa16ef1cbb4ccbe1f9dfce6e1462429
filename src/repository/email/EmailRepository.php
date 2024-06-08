@@ -6,5 +6,5 @@ use Src\Entity\SendEmailRequest;
 
 interface EmailRepository
 {
-    public function saveEmail(SendEmailRequest $req);
+    public function save(SendEmailRequest $req);
 }

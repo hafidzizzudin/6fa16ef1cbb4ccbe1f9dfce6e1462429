@@ -3,8 +3,10 @@ CREATE TABLE IF NOT EXISTS email (
     user_id VARCHAR(255) NOT NULL DEFAULT '',
     is_html BOOLEAN NOT NULL DEFAULT FALSE,
     email_to VARCHAR(255) NOT NULL DEFAULT '',
-    body TEXT
+    body TEXT,
+    subject VARCHAR(255) NOT NULL DEFAULT ''
 );
 
 CREATE INDEX IF NOT EXISTS IDX_user_id ON email (user_id);
+
 CREATE INDEX IF NOT EXISTS IDX_email_to ON email (email_to);

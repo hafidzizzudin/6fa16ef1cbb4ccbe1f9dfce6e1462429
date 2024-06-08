@@ -11,10 +11,10 @@ class EmailSQLRepository implements EmailRepository
     {
     }
 
-    public function saveEmail(SendEmailRequest $req)
+    public function save(SendEmailRequest $req)
     {
         $insertStatement = "
-            INSERT INTO email (user_id, is_html, email_to, body) VALUES (:user_id, :is_html, :email_to, :body)
+            INSERT INTO email (user_id, is_html, email_to, body, subject) VALUES (:user_id, :is_html, :email_to, :body, :subject)
         ";
 
         $statement = $this->db->prepare($insertStatement);
