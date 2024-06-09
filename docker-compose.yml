@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - levart-net
+  postgres:
+    image: postgres:alpine3.20
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=user12345
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_USER=levart
+    volumes:
+      - ./docker-volume/postgres:/var/lib/postgresql/data
+    networks:
+      - levart-net
+  redis:
+    image: redis:6.2.11-alpine3.17
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./docker-volume/redis:/data
+    networks:
+      - levart-net
+networks:
+  levart-net:
+    name: levart-net
+    driver: bridge
