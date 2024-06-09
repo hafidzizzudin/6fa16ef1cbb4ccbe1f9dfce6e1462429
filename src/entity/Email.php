@@ -8,7 +8,7 @@ class Email
     public const STATUS_SUCCESS = 'success';
     public const STATUS_FAILED = 'failed';
 
-    private int $id;
+    private ?int $id;
     private string $status = '';
     private string $note = '';
 
@@ -82,6 +82,17 @@ class Email
         $result = $this->toArrayInsert();
         $result['id'] = $this->id;
         return $result;
+    }
+
+    public static function fromRequest(array $data): Email
+    {
+        return new Email(
+            $data['user_id'],
+            $data['is_html'],
+            $data['email_to'],
+            $data['body'],
+            $data['subject'],
+        );
     }
 
     public static function fromArray(array $data): Email

@@ -22,7 +22,6 @@ while (true) {
         $email->setNote($e->getMessage());
         $email->setStatus(Email::STATUS_FAILED);
         echo "sending email id " . $email->getID() . " failed\n";
-        $emailSender->resetConnection();
     } finally {
         $emailRepository->updateResult($email);
     }

@@ -13,6 +13,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 
 error_reporting(0);
 
+$userEmail = '';
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode('/', $uri);
 
@@ -46,6 +47,10 @@ function serve(array $uri, AuthController $authController, EmailController $emai
                 header('HTTP/1.1 400 Bad Request');
                 echo json_encode(['message' => "Bad request: " . $e->getMessage()]);
                 return;
+            case 401:
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(['message' => "Unauthorized: " . $e->getMessage()]);
+                return;
             default:
                 header('HTTP/1.1 500 Internal Server Error');
                 echo json_encode(['message' => "Internal error: " . $e->getMessage()]);
@@ -59,15 +64,20 @@ function serve(array $uri, AuthController $authController, EmailController $emai
     }
 }
 
-function serveByUri(array $uri, AuthController $authController, EmailController $emailController): array
+function serveByUri(array $uri): array
 {
+    global $authController, $emailController, $userEmail;
+
     switch ($uri[1]) {
         case 'login':
             return $authController->login();
         case 'register':
             return $authController->register();
         default:
-            return $emailController->sendEmail();
+            if (!authenticate())
+                throw new Exception("need login first", 401);
+
+            return $emailController->sendEmail($userEmail);
     }
 }
 
@@ -90,5 +100,35 @@ function validatePath(array $uri)
     if (!in_array($uri[1], ['email', 'login', 'register'], true)) {
         header("HTTP/1.1 404 Not Found");
         exit();
+    }
+}
+
+function authenticate()
+{
+    global $authenticator, $userEmail;
+
+    try {
+        switch (true) {
+            case array_key_exists('HTTP_AUTHORIZATION', $_SERVER):
+                $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+                break;
+            case array_key_exists('Authorization', $_SERVER):
+                $authHeader = $_SERVER['Authorization'];
+                break;
+            default:
+                $authHeader = null;
+                break;
+        }
+
+        preg_match('/Bearer\s(\S+)/', $authHeader, $matches);
+        if (!isset($matches[1])) {
+            throw new \Exception('No Bearer Token');
+        }
+
+        $userEmail =  $authenticator->verify($matches[1]);
+
+        return !empty($userEmail);
+    } catch (\Exception $e) {
+        return false;
     }
 }

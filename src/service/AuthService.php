@@ -5,18 +5,17 @@ namespace Src\Service;
 use Src\Repository\User\UserRepository;
 use DateTimeImmutable;
 use Exception;
-use Lcobucci\JWT\Encoding\ChainedFormatter;
-use Lcobucci\JWT\Encoding\JoseEncoder;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Token\Builder;
+use Firebase\JWT\JWT;
 use Ramsey\Uuid\Uuid;
 use Src\Entity\User;
 
 class AuthService
 {
+    private string $jwtSecret;
+
     public function __construct(private UserRepository $userRepository)
     {
+        $this->jwtSecret = $_ENV['JWT_SECRET'];
     }
 
     public function register(array $data): string
@@ -53,26 +52,19 @@ class AuthService
 
     private function generateToken(User $user): string
     {
-        $tokenBuilder = (new Builder(new JoseEncoder(), ChainedFormatter::default()));
-        $algorithm    = new Sha256();
-        $signingKey   = InMemory::plainText('6fa16ef1cbb4ccbe1f9dfce6e1462429');
+        $now   = time();
 
-        $now   = new DateTimeImmutable();
+        $payload = [
+            'iss' => 'https://levart.com',
+            'aud' => 'https://levart.com',
+            'iat' => $now,
+            'nbf' => $now,
+            'exp' => $now + 3600,
+            'email' => $user->email,
+        ];
 
-        $token = $tokenBuilder
-            // Configures the issuer (iss claim)
-            ->issuedBy('http://levart.com')
-            // Configures the audience (aud claim)
-            ->permittedFor('http://levart.com')
-            // Configures the time that the token was issue (iat claim)
-            ->issuedAt($now)
-            // Configures the expiration time of the token (exp claim)
-            ->expiresAt($now->modify('+1 hour'))
-            // Configures a new claim, called "uid"
-            ->withClaim('email', $user->email)
-            // Builds a new token
-            ->getToken($algorithm, $signingKey);
+        $jwt = JWT::encode($payload, $this->jwtSecret, 'HS256');
 
-        return $token->toString();
+        return $jwt;
     }
 }

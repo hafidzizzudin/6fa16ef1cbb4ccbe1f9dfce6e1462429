@@ -24,6 +24,8 @@ class EmailSenderPHPMailer implements EmailSender
         $this->mailer->Subject = $req->getSubject();
 
         $this->mailer->send();
+
+        $this->resetConnection();
     }
 
     public function send(Email $req)

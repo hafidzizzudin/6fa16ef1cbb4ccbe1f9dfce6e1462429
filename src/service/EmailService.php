@@ -15,7 +15,7 @@ class EmailService
     ) {
     }
 
-    public function sendEmail(Email $req): void
+    public function sendEmail(Email $req): int
     {
         // save email in repository
         $id = $this->emailRepository->save($req);
@@ -27,5 +27,7 @@ class EmailService
         // send email async
         $req->setID($id);
         $this->emailSender->send($req);
+
+        return $id;
     }
 }
