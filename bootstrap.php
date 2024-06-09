@@ -9,11 +9,9 @@ use Src\Module\EmailSender\EmailSenderPHPMailer;
 use Src\Repository\Email\EmailSQLRepository;
 use Src\Service\AuthService;
 use Src\Service\EmailService;
-use Src\System\AuthDBAuthenticator;
 use Src\System\Authenticator;
 use Src\System\DatabaseConnector;
 use Src\System\Mailer;
-use Src\System\OktaAuthenticator;
 use Src\System\RedisQueue;
 
 // load env var

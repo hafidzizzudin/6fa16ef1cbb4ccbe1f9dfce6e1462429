@@ -2,7 +2,6 @@
 
 namespace Src\System;
 
-use Enqueue\Redis\PRedis;
 use Enqueue\Redis\RedisConnectionFactory;
 use Interop\Queue\Context;
 

@@ -3,7 +3,6 @@
 namespace Src\Service;
 
 use Src\Repository\User\UserRepository;
-use DateTimeImmutable;
 use Exception;
 use Firebase\JWT\JWT;
 use Ramsey\Uuid\Uuid;
