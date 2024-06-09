@@ -1,9 +1,13 @@
 <?php
 require 'vendor/autoload.php';
 
+use Src\Repository\User\UserSQLRepository;
 use Dotenv\Dotenv;
+use Src\Controller\AuthController;
+use Src\Controller\EmailController;
 use Src\Module\EmailSender\EmailSenderPHPMailer;
 use Src\Repository\Email\EmailSQLRepository;
+use Src\Service\AuthService;
 use Src\Service\EmailService;
 use Src\System\DatabaseConnector;
 use Src\System\Mailer;
@@ -20,9 +24,15 @@ $queueContext = (new RedisQueue())->getContext();
 
 // init repository
 $emailRepository = new EmailSQLRepository($dbConnection);
+$userRepository = new UserSQLRepository($dbConnection);
 
 // init module
 $emailSender = new EmailSenderPHPMailer($phpMailer, $queueContext);
 
 // init service
 $emailService = new EmailService($emailRepository, $emailSender);
+$authService = new AuthService($userRepository);
+
+// init controller
+$authController = new AuthController($authService);
+$emailController = new EmailController($emailService);

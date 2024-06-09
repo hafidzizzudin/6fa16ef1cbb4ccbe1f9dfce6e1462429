@@ -41,3 +41,50 @@ or
 3. Execute Migration
     - Up: `make migrate-up`
     - Down: `make migrate-down`
+
+### API Reference
+
+#### Register
+
+```http
+  POST /register
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. user email|
+| `password`      | `string` | **Required**. user password|
+
+#### Login
+
+```http
+  POST /login
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `email`      | `string` | **Required**. user email|
+| `password`      | `string` | **Required**. user password|
+
+#### Send email
+
+```http
+  POST /email
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `is_html`      | `boolean` | **Optional**. default value false|
+| `email_to`      | `string` | **Required**. Target email to whom the email will be sent|
+| `subject`      | `string` | **Required**. Email subject|
+| `body`      | `string` | **Required**. Email body that can be in HTML format by setting `is_html` to `true`|
+
+example
+```json
+{
+    "is_html": "true",
+    "email_to": "user@user.com",
+    "subject": "testing subject",
+    "body": "<br>Hello World<br>"
+}
+```
