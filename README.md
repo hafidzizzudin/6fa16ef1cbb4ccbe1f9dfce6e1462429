@@ -1,10 +1,14 @@
 ## Email Sender Project
 This service main functionality is to send email asynchronously using worker. The detail information about this service is listed below:
-- Language: `PHP`
+- Language: `PHP8.3`
 - Dependency Management: `composer`
 - Database: `PostgreSQL`
 - Protocol: `HTTP`
 - Queue: `Redis`
+- Oauth2 Provider: `Okta` https://www.okta.com/
+
+### System Design
+![alt text](./design.png) 
 
 ### Database migration
 #### Run Manual
@@ -71,6 +75,7 @@ or
 ```http
   POST /email
 ```
+header `Authorization: Bearer {{access_token}}`
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
@@ -88,3 +93,16 @@ example
     "body": "<br>Hello World<br>"
 }
 ```
+
+### How to run
+#### Prerequisite
+1. Install `composer`
+5. Install `docker-compose`
+
+#### Steps
+1. Setup Postgresql database
+2. Execute database migration [here](#database-migration)
+3. Setup Redis
+4. Create `.env` and fill it with correct value. Refer to `.env.example`
+5. Run `composer install`
+6. Run `docker-compose up -d`
