@@ -1,9 +1,29 @@
 <?php
 
+require 'vendor/autoload.php';
+
+use Dotenv\Dotenv;
 use Src\Entity\Email;
+use Src\Module\EmailSender\EmailSenderPHPMailer;
+use Src\Repository\Email\EmailSQLRepository;
+use Src\System\DatabaseConnector;
+use Src\System\Mailer;
+use Src\System\RedisQueue;
 
-require 'bootstrap.php';
+// load env var
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
+// setup queue
+$queueContext = (new RedisQueue())->getContext();
+
+// setup system
+$dbConnection = (new DatabaseConnector())->getDbConnection();
+$emailRepository = new EmailSQLRepository($dbConnection);
+$phpMailer = (new Mailer())->getMailer();
+$emailSender = new EmailSenderPHPMailer($phpMailer, $queueContext);
+
+// prepare consumer
 $mailQueue = $queueContext->createQueue('email_queue');
 $consumer = $queueContext->createConsumer($mailQueue);
 
