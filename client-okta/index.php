@@ -67,7 +67,7 @@ if (isset($_GET['code'])) {
 
     if ($token->active == 1) {
         $_SESSION['username'] = $token->username;
-        header('Location: /');
+        header('Location: ' . $redirect_uri);
         die();
     }
 }

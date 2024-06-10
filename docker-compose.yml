@@ -5,6 +5,8 @@ services:
     image: nginx:alpine
     container_name: nginx
     restart: unless-stopped
+    volumes:
+      - ./deployment/nginx:/etc/nginx/conf.d
     ports:
       - "8080:80"
     networks:
@@ -31,6 +33,14 @@ services:
       - "6379:6379"
     volumes:
       - ./docker-volume/redis:/data
+    networks:
+      - levart-net
+  php-client:
+    image: php:fpm-alpine
+    container_name: php-client
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
     networks:
       - levart-net
 networks:
