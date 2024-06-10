@@ -48,6 +48,12 @@ services:
     command: php consumer.php
     networks:
       - levart-net
+  php-server:
+    image: php:base-image
+    container_name: php-server
+    restart: unless-stopped
+    networks:
+      - levart-net
 networks:
   levart-net:
     name: levart-net
