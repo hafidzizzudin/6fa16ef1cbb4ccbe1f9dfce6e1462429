@@ -2,9 +2,14 @@
 
 namespace Src\System;
 
+use DateInterval;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use GuzzleHttp\Client;
+use Illuminate\Cache\FileStore;
+use Illuminate\Cache\Repository;
+use Illuminate\Filesystem\Filesystem;
+use Psr\SimpleCache\CacheInterface;
 use UnexpectedValueException;
 
 class Authenticator
@@ -17,6 +22,8 @@ class Authenticator
 
     private string $clientID;
 
+    private CacheInterface $cache;
+
     public function __construct()
     {
         $this->jwtSecret = $_ENV['JWT_SECRET'];
@@ -26,8 +33,15 @@ class Authenticator
             return;
 
         // build okta verifier
+        $this->cache = new Repository(new FileStore(new Filesystem(), __DIR__ . "/../../.cache"));
         $issuer = $_ENV['OKTA_ISSUER'];
         $this->clientID = $_ENV['OKTA_CLIENTID'];
+
+        $cached = $this->cache->get($this->clientID);
+        if ($cached) {
+            $this->keys = self::parseKeySet($cached);
+            return;
+        }
 
         $keysUrlSource = "$issuer/v1/keys";
         $this->keys = $this->getKeys($keysUrlSource);
@@ -97,6 +111,7 @@ class Authenticator
     {
         $client = new Client();
         $keys = json_decode($client->request('GET', $urlSource)->getBody()->getContents());
+        $this->cache->set($this->clientID, $keys, DateInterval::createFromDateString('1 day'));
 
         return self::parseKeySet($keys);
     }
