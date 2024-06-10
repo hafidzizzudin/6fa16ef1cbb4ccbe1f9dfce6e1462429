@@ -36,11 +36,16 @@ services:
     networks:
       - levart-net
   php-client:
-    image: php:fpm-alpine
+    image: php:base-image
     container_name: php-client
     restart: unless-stopped
-    volumes:
-      - .:/var/www/html
+    networks:
+      - levart-net
+  php-worker:
+    image: php:base-image
+    container_name: php-worker
+    restart: unless-stopped
+    command: php consumer.php
     networks:
       - levart-net
 networks:
