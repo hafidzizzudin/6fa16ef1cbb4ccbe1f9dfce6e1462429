@@ -8,7 +8,11 @@ This service main functionality is to send email asynchronously using worker. Th
 - Oauth2 Provider: `Okta` https://www.okta.com/
 
 ### System Design
-![alt text](./design.png) 
+1. Flow process
+![flow design](./design.png) 
+
+2. Docker design
+![docker design](./docker-design.png) 
 
 ### Database migration
 #### Run Manual
@@ -70,6 +74,16 @@ or
 | `email`      | `string` | **Required**. user email|
 | `password`      | `string` | **Required**. user password|
 
+#### Get token for testing
+```http
+  GET /client
+```
+
+#### Get token for okta client
+```http
+  GET /client-okta
+```
+
 #### Send email
 
 ```http
@@ -96,13 +110,32 @@ example
 
 ### How to run
 #### Prerequisite
-1. Install `composer`
-5. Install `docker-compose`
+1. Install `docker` alongside `compose` plugin https://docs.docker.com/compose/install/
 
 #### Steps
-1. Setup Postgresql database
-2. Execute database migration [here](#database-migration)
-3. Setup Redis
-4. Create `.env` and fill it with correct value. Refer to `.env.example`
-5. Run `composer install`
-6. Run `docker-compose up -d`
+1. Create `.env` and fill it with correct value. Refer to `.env.example`
+2. Build image `php:base-image`
+    ```bash
+    docker build -t php:base-image .
+    ```
+3. Run docker compose
+    ```bash
+    docker-compose up -d
+    ```
+4. Execute database migration [here](#database-migration)
+5. Open client page in your browser to get bearer token
+    5.1 Visit http://localhost:8080/client for testing client, or
+    5.2 Visit http://localhost:8080/client-okta if using okta user
+6. Copy bearer token `Bearer {{ token }}`
+7. Execute this example curl in your Postman or terminal. Don't forget to change the token value with the one from step 6
+    ```bash
+    curl -L 'http://localhost:8080/email' \
+    -H 'Authorization: Bearer {{ token }}' \
+    -H 'Content-Type: application/json' \
+    --data-raw '{
+        "is_html": "true",
+        "email_to": "user@levart.com",
+        "subject": "testing subject final",
+        "body": "<br>Hello World! Nice to meet you<br>"
+    }'
+    ```
